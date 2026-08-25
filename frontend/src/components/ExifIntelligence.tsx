@@ -1,5 +1,5 @@
-import React from 'react';
-import { Camera, Calendar, HardDrive, Compass, Cpu, CheckCircle2, XCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { Camera, Satellite, Layers, ChevronDown, ChevronUp, Eye, Compass, ShieldCheck } from 'lucide-react';
 import { ExifData } from '../types/analysis';
 
 interface ExifIntelligenceProps {
@@ -7,90 +7,110 @@ interface ExifIntelligenceProps {
 }
 
 export const ExifIntelligence: React.FC<ExifIntelligenceProps> = ({ exif }) => {
+  const [showAllTags, setShowAllTags] = useState(false);
+
   if (!exif) return null;
 
   return (
-    <div className="glass-panel p-6 space-y-4">
+    <div className="glass-panel p-5 space-y-4">
       
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-        <div>
-          <h3 className="font-display font-bold text-lg text-white tracking-tight flex items-center gap-2">
-            <Camera className="w-5 h-5 text-cyan-400" />
-            <span>EXIF &amp; Metadata Intelligence</span>
-          </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Low-level hardware telemetry extracted from the original image file
-          </p>
+      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-cyan-950/60 border border-cyan-500/40 flex items-center justify-center text-cyan-400">
+            <Camera className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="font-display font-bold text-sm text-white">
+              Optical EXIF &amp; Hardware Telemetry
+            </h3>
+            <p className="text-[11px] text-slate-400">
+              Sensor metadata, optical focal length, and satellite GPS IFD tags
+            </p>
+          </div>
         </div>
 
-        {/* Source Badge */}
+        {/* GPS Badge */}
         {exif.has_gps ? (
-          <span className="px-2.5 py-1 rounded text-xs font-mono font-bold bg-emerald-950 text-emerald-300 border border-emerald-500/40 shadow-sm flex items-center gap-1.5">
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>Location Source: EXIF GPS</span>
+          <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-emerald-950 text-emerald-300 border border-emerald-500/40 flex items-center gap-1">
+            <Satellite className="w-3 h-3 text-emerald-400" />
+            <span>Hardware GPS Verified</span>
           </span>
         ) : (
-          <span className="px-2.5 py-1 rounded text-xs font-mono font-medium bg-cyber-800 text-slate-400 border border-slate-700 flex items-center gap-1.5">
-            <XCircle className="w-3.5 h-3.5 text-slate-500" />
-            <span>No Hardware GPS in EXIF</span>
+          <span className="px-2.5 py-1 rounded-full text-[10px] font-mono text-slate-400 bg-slate-900 border border-slate-700">
+            No Embedded GPS Tag
           </span>
         )}
       </div>
 
-      {/* Grid Specs */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {/* Grid of Key Optical Data */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-mono">
         
-        {/* Camera */}
-        <div className="p-3 rounded-xl bg-cyber-950/60 border border-slate-800">
-          <p className="text-[10px] font-mono uppercase text-slate-500">Camera Device</p>
-          <p className="text-xs font-bold text-white mt-1 truncate">
-            {exif.make || exif.model ? `${exif.make || ''} ${exif.model || ''}`.trim() : 'Unspecified'}
-          </p>
+        {/* Camera / Make */}
+        <div className="p-2.5 rounded-lg bg-cyber-950/60 border border-slate-800">
+          <span className="text-slate-500 text-[10px] block">Capture Device</span>
+          <span className="text-slate-200 font-semibold truncate block">
+            {exif.make ? `${exif.make} ${exif.model || ''}` : 'Unknown'}
+          </span>
         </div>
 
-        {/* Lens */}
-        <div className="p-3 rounded-xl bg-cyber-950/60 border border-slate-800">
-          <p className="text-[10px] font-mono uppercase text-slate-500">Lens Optics</p>
-          <p className="text-xs font-bold text-white mt-1 truncate">
-            {exif.lens || 'Default / Phone'}
-          </p>
+        {/* 35mm Equiv Focal Length */}
+        <div className="p-2.5 rounded-lg bg-cyber-950/60 border border-slate-800">
+          <span className="text-slate-500 text-[10px] block">35mm Equiv Lens</span>
+          <span className="text-cyan-300 font-bold block">
+            {exif.focal_length_35mm ? `${exif.focal_length_35mm} mm` : exif.focal_length_mm ? `${exif.focal_length_mm} mm` : 'N/A'}
+          </span>
         </div>
 
-        {/* Capture Date */}
-        <div className="p-3 rounded-xl bg-cyber-950/60 border border-slate-800">
-          <p className="text-[10px] font-mono uppercase text-slate-500">Capture Timestamp</p>
-          <p className="text-xs font-mono text-cyan-300 mt-1 truncate">
-            {exif.captured_at || 'Not recorded'}
-          </p>
+        {/* Aperture / Shutter */}
+        <div className="p-2.5 rounded-lg bg-cyber-950/60 border border-slate-800">
+          <span className="text-slate-500 text-[10px] block">Optics (ƒ / Shutter)</span>
+          <span className="text-slate-200 font-semibold block truncate">
+            {exif.f_number ? `ƒ/${exif.f_number}` : 'N/A'} {exif.exposure_time ? `• ${exif.exposure_time}` : ''}
+          </span>
         </div>
 
-        {/* Resolution */}
-        <div className="p-3 rounded-xl bg-cyber-950/60 border border-slate-800">
-          <p className="text-[10px] font-mono uppercase text-slate-500">Resolution</p>
-          <p className="text-xs font-mono text-white mt-1">
+        {/* ISO / Flash */}
+        <div className="p-2.5 rounded-lg bg-cyber-950/60 border border-slate-800">
+          <span className="text-slate-500 text-[10px] block">ISO / Flash</span>
+          <span className="text-slate-200 font-semibold block truncate">
+            {exif.iso_speed ? `ISO ${exif.iso_speed}` : 'N/A'} {exif.flash ? `• ${exif.flash}` : ''}
+          </span>
+        </div>
+
+        {/* Sensor Dimensions */}
+        <div className="p-2.5 rounded-lg bg-cyber-950/60 border border-slate-800">
+          <span className="text-slate-500 text-[10px] block">Image Resolution</span>
+          <span className="text-slate-200 font-semibold block">
             {exif.dimensions || 'N/A'}
-          </p>
+          </span>
+        </div>
+
+        {/* Timestamp */}
+        <div className="p-2.5 rounded-lg bg-cyber-950/60 border border-slate-800">
+          <span className="text-slate-500 text-[10px] block">Capture Timestamp</span>
+          <span className="text-slate-200 font-semibold block truncate">
+            {exif.captured_at || 'Not Recorded'}
+          </span>
+        </div>
+
+        {/* GPS Altitude */}
+        <div className="p-2.5 rounded-lg bg-cyber-950/60 border border-slate-800">
+          <span className="text-slate-500 text-[10px] block">GPS Altitude</span>
+          <span className="text-slate-200 font-semibold block">
+            {exif.altitude !== undefined && exif.altitude !== null ? `${exif.altitude} m` : 'N/A'}
+          </span>
+        </div>
+
+        {/* Compass Direction */}
+        <div className="p-2.5 rounded-lg bg-cyber-950/60 border border-slate-800">
+          <span className="text-slate-500 text-[10px] block">Camera Heading</span>
+          <span className="text-cyan-300 font-bold block">
+            {exif.gps_img_direction !== undefined && exif.gps_img_direction !== null ? `${exif.gps_img_direction}°` : 'N/A'}
+          </span>
         </div>
 
       </div>
-
-      {/* GPS Specific details if available */}
-      {exif.has_gps && (
-        <div className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/30 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2">
-            <Compass className="w-4 h-4 text-emerald-400" />
-            <span className="font-mono text-emerald-200">
-              Direct EXIF Coordinates: <strong>{exif.latitude?.toFixed(6)}, {exif.longitude?.toFixed(6)}</strong>
-            </span>
-          </div>
-          {exif.altitude && (
-            <span className="font-mono text-slate-400">
-              Altitude: <strong className="text-white">{exif.altitude}m</strong>
-            </span>
-          )}
-        </div>
-      )}
 
     </div>
   );

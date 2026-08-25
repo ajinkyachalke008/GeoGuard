@@ -5,11 +5,16 @@ from pydantic import Field
 
 class Settings(BaseSettings):
     """GeoGuard Application Configuration"""
-    GEOLOCATION_PROVIDER: str = Field(default="openrouter", description="openrouter, openai, geoseer, or mock")
+    GEOLOCATION_PROVIDER: str = Field(default="gemini", description="gemini, openrouter, openai, claude, geoseer, or mock")
     
-    # OpenRouter API (Access to GPT-4o, GPT-4o-mini, Gemini, Claude)
+    # Google Gemini API
+    GEMINI_API_KEY: str = Field(default="", description="API key for Google AI Studio / Gemini")
+    GEMINI_MODEL: str = Field(default="gemini-2.0-flash", description="Gemini model ID (e.g. gemini-2.0-flash, gemini-1.5-pro, gemini-1.5-flash)")
+    GEMINI_API_BASE: str = Field(default="https://generativelanguage.googleapis.com/v1beta", description="Google Gemini API base")
+
+    # OpenRouter API (Access to GPT-4o, Claude, Gemini)
     OPENROUTER_API_KEY: str = Field(default="", description="API key for OpenRouter")
-    OPENROUTER_MODEL: str = Field(default="openai/gpt-4o", description="OpenRouter Model ID (e.g. openai/gpt-4o, openai/gpt-4o-mini)")
+    OPENROUTER_MODEL: str = Field(default="openai/gpt-4o", description="OpenRouter Model ID")
     OPENROUTER_API_BASE: str = Field(default="https://openrouter.ai/api/v1", description="OpenRouter base URL")
 
     # Direct OpenAI API
@@ -17,16 +22,25 @@ class Settings(BaseSettings):
     OPENAI_MODEL: str = Field(default="gpt-4o", description="Direct OpenAI model ID")
     OPENAI_API_BASE: str = Field(default="https://api.openai.com/v1", description="OpenAI base URL")
 
+    # Anthropic Claude API
+    ANTHROPIC_API_KEY: str = Field(default="", description="Anthropic Claude API key")
+    ANTHROPIC_MODEL: str = Field(default="claude-3-5-sonnet-20241022", description="Claude model ID")
+
     # GeoSeer API
     GEOSEER_API_KEY: str = Field(default="", description="API key for GeoSeer service")
     GEOSEER_API_URL: str = Field(default="https://geoseeer.com/api/v1", description="GeoSeer API base URL")
     
+    # OpenStreetMap / Nominatim / Overpass Services
+    NOMINATIM_USER_AGENT: str = Field(default="GeoGuard-OSINT-Platform/2.0", description="User agent for OpenStreetMap Nominatim")
+    ENABLE_OSM_LOOKUP: bool = Field(default=True, description="Enable real OpenStreetMap reverse geocoding and Overpass lookup")
+    ENABLE_SOLAR_CALCULATION: bool = Field(default=True, description="Enable NOAA astronomical solar & shadow vector calculations")
+
     HOST: str = Field(default="0.0.0.0", description="Server host")
     PORT: int = Field(default=8000, description="Server port")
     ENVIRONMENT: str = Field(default="development", description="development / production")
     CORS_ORIGINS: str = Field(default="http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000")
     
-    MAX_FILE_SIZE_MB: int = Field(default=10, description="Maximum image upload size in MB")
+    MAX_FILE_SIZE_MB: int = Field(default=15, description="Maximum image upload size in MB")
     ALLOWED_EXTENSIONS: str = Field(default="jpg,jpeg,png,webp,heic")
     API_TIMEOUT_SECONDS: int = Field(default=60)
 

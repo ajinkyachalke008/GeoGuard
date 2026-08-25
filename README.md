@@ -1,82 +1,93 @@
 # GeoGuard 🌍🛡️
 
-**AI Visual Geolocation & Geographic Intelligence Platform**
+**Industrial-Grade AI Visual Geolocation & OpenStreetMap OSINT Intelligence Platform**
 
-> Upload a photograph → extract satellite EXIF telemetry and visible multilingual text → estimate coordinates through modular AI visual geolocation → explore results on an interactive map → evaluate deep evidence across 7 visual categories and contradiction analysis.
-
----
-
-## 🌟 Overview
-
-**GeoGuard** is an open, modular, professional-grade geospatial intelligence platform. It triangulates geographic coordinates from photographs by integrating hardware metadata (EXIF/GPS), optical character recognition (OCR), and visual scene reasoning.
-
-### Key Highlights
-
-- 🧠 **Multi-Sensory Pipeline**: Executes 7 real analysis stages from raw image decoding to candidate clustering and contradiction analysis.
-- ⚡ **Modular Provider Engine**:
-  - **Mock Mode (Default)**: Complete, high-fidelity offline simulation with multi-continent scenarios and realistic candidate distributions—**runs 100% out of the box with zero external API keys**.
-  - **GeoSeer Provider**: Native production integration with GeoSeer's AI visual geolocation REST & SSE endpoints (`POST /api/v1/analyze`).
-  - **Extensible Architecture**: Easily add custom vision-language models or self-hosted weights in the future.
-- 🛰️ **Hardware EXIF & GPS Intelligence**: Extracts camera manufacturer, lens optics, timestamps, orientation, and decodes GPS IFD tags (DMS to decimal degrees), explicitly differentiating between `Location Source: EXIF GPS` and `Location Source: AI Inference`.
-- 🔤 **Visible Text & OCR Intelligence**: Scans imagery for road signs, commercial signboards, phone numbers, URLs, and identifies character writing systems (Devanagari, Cyrillic, Latin, Arabic, East Asian).
-- 🗺️ **Interactive Cartography**: Interactive MapLibre GL dark-mode map with pulsating radar beacon, candidate pins, uncertainty radius polygons, and layer toggles (Dark, Satellite, Street).
-- 🔬 **7-Category Evidence Breakdown**: Transparently details the visual evidence behind the prediction across **Architecture**, **Roads**, **Language**, **Vehicles**, **Infrastructure**, **Environment**, and **Landmarks**.
-- ⚖️ **Scientific Contradictions & Uncertainty Analysis**: Highlights counter-clues, visual ambiguities, and missing landmark signatures to ensure scientific honesty.
+> Upload any photograph or paste field incident text → extract optical EXIF sensor telemetry and multilingual signage → deduce exact coordinates through Google Gemini / Claude / OpenAI multimodal AI vision → cross-reference real-world OpenStreetMap Nominatim & Overpass infrastructure → compute NOAA solar shadow angles → explore results on MapLibre GL → inspect micro-clues with the Forensic Image Loupe → export intelligence dossiers in GeoJSON, KML, CSV, or PDF.
 
 ---
 
-## 🏗️ Architecture
+## 🌟 100% Real Key Highlights & Capabilities
+
+- 🧠 **Multi-Sensory Real AI Vision Engine**:
+  - **Google Gemini 3.6 Flash / 2.0 / 1.5 Pro**: World-class spatial deduction, landmark knowledge, biome classification, and typography reading.
+  - **Anthropic Claude 3.5 Sonnet**: Forensic spatial reasoning and architectural categorization.
+  - **OpenAI GPT-4o / GPT-4o-mini**: Direct OpenAI and OpenRouter multimodal vision endpoints.
+  - **GeoSeer Provider**: Native cloud API integration.
+  - **Offline Mock Engine**: Instant fallback mode for offline testing.
+
+- 🗺️ **Real OpenStreetMap Ground-Truth Verification**:
+  - **Nominatim Reverse Geocoding**: Queries live OpenStreetMap for verified administrative boundaries (Road, Suburb, City, County, State, Country, Postal Code, OSM ID, Bounding Box).
+  - **Overpass API Infrastructure Discovery**: Scans a 1.5km radius around predicted coordinates for real registered amenities (churches, mosques, temples, railway stations, transit stops, communications towers, bridges, historic monuments).
+  - **Real Surface Elevation**: Instant altitude (meters above sea level) via Open-Meteo elevation API.
+
+- ☀️ **NOAA Astronomical Solar & Shadow Vector Engine**:
+  - Computes exact **Solar Azimuth Angle** (degrees), **Solar Elevation Angle**, **Shadow Cast Direction**, and **Shadow Length Multiplier** from capture timestamp & coordinates.
+  - Projects the Solar Azimuth Vector and Shadow Cone directly on the interactive map to verify lighting/shadows in the photo.
+
+- 🔍 **Forensic Optical Image Inspector (Loupe & Filters)**:
+  - **Magnifier Loupe**: Up to 600% magnification with fluid pan for inspecting blurry road signs, distant towers, and vehicle registration plates.
+  - **Live Canvas Filters**: Real-time Sobel Edge Detection, High-Contrast booster, Brightness, Saturation, and Color Inversion.
+  - **Optical Metadata Telemetry**: 35mm equivalent focal length, camera aperture ($f$-stop), shutter speed, ISO sensitivity, exposure bias, white balance, and camera compass heading.
+
+- 🌐 **Multi-Format Coordinates & External OSINT Pivots**:
+  - Formats: **Decimal Degrees (DD)**, **Degrees Minutes Seconds (DMS)**, **Military Grid Reference System (MGRS)**, **Universal Transverse Mercator (UTM)**, and **Google Plus Code (OLC)**.
+  - One-Click External Pivots: **Google Street View**, **Google Maps 3D Satellite**, **OpenStreetMap**, **Mapillary Street Imagery**, **Sentinel Hub Earth Observation**, and **SunCalc**.
+
+- 📁 **Investigation Export Engine**:
+  - **GeoJSON**: Standard GIS FeatureCollection with candidate points and uncertainty radius polygons.
+  - **KML**: Ready for Google Earth Pro 3D flyovers.
+  - **CSV**: Tabular spreadsheet for analyst reporting.
+  - **Printable / PDF OSINT Brief**: Formatted intelligence dossier with mission header, photo evidence, map overview, coordinate breakdowns, 7-domain evidence matrix, and investigator signoff block.
+
+- 📝 **Dual Mode: Photo Geolocation & Field Incident Text-to-Geo**:
+  - Seamlessly switch between photo geolocation and text incident extraction (dispatch messages, news excerpts, telegram channels).
+
+---
+
+## 🏗️ System Architecture
 
 ```text
-                               ┌─────────────────────────┐
-                               │   User Image Upload     │
-                               │ (JPG, PNG, WebP, HEIC)  │
-                               └────────────┬────────────┘
-                                            │
-                                            ▼
-                               ┌─────────────────────────┐
-                               │   1. Preparing Image    │
-                               │  (MIME & Size Validator)│
-                               └────────────┬────────────┘
-                                            │
-                     ┌──────────────────────┴──────────────────────┐
-                     ▼                                             ▼
-        ┌─────────────────────────┐                   ┌─────────────────────────┐
-        │  2. Extracting Metadata │                   │ 3. Analyzing Text (OCR) │
-        │ (EXIF / GPS / Camera)   │                   │ (Scripts, Signs, Langs) │
-        └────────────┬────────────┘                   └────────────┬────────────┘
-                     │                                             │
-                     └──────────────────────┬──────────────────────┘
-                                            ▼
-                               ┌─────────────────────────┐
-                               │4. AI Visual Geolocation │
-                               └────────────┬────────────┘
-                                            │
-                      ┌─────────────────────┴─────────────────────┐
-                      ▼                                           ▼
-         ┌─────────────────────────┐                 ┌─────────────────────────┐
-         │      Mock Provider      │                 │    GeoSeer Provider     │
-         │  (Offline Demo Mode)    │                 │    (Live External API)  │
-         └────────────┬────────────┘                 └────────────┬────────────┘
-                      │                                           │
-                      └─────────────────────┬─────────────────────┘
-                                            ▼
-                               ┌─────────────────────────┐
-                               │ 5. Candidate Generation │
-                               │  (Ranking & Radiuses)   │
-                               └────────────┬────────────┘
-                                            │
-                                            ▼
-                               ┌─────────────────────────┐
-                               │  6. Evidence & Conflict │
-                               │(7-Domain & Uncertainty) │
-                               └────────────┬────────────┘
-                                            │
-                                            ▼
-                               ┌─────────────────────────┐
-                               │ 7. Geographic Result    │
-                               │  (MapLibre & Dashboard) │
-                               └─────────────────────────┘
+                               ┌───────────────────────────────────────────────┐
+                               │     User Input: Image or Field Incident       │
+                               │  (JPG, PNG, WebP, HEIC or Dispatch Text)     │
+                               └──────────────────────┬────────────────────────┘
+                                                      │
+                                                      ▼
+                               ┌───────────────────────────────────────────────┐
+                               │         1. Preparing Image & Validation       │
+                               │        (MIME & 15MB Buffer Integrity)         │
+                               └──────────────────────┬────────────────────────┘
+                                                      │
+                       ┌──────────────────────────────┴──────────────────────────────┐
+                       ▼                                                             ▼
+          ┌─────────────────────────┐                                   ┌─────────────────────────┐
+          │ 2. EXIF & Sensor Optics │                                   │  3. OCR & Script Reader │
+          │ (35mm Focal, F-stop,    │                                   │ (Devanagari, Cyrillic,  │
+          │  ISO, Heading, GPS)     │                                   │  Latin, Kanji, Signage) │
+          └────────────┬────────────┘                                   └────────────┬────────────┘
+                       │                                                             │
+                       └──────────────────────────────┬──────────────────────────────┘
+                                                      ▼
+                               ┌───────────────────────────────────────────────┐
+                               │ 4. Multimodal AI Visual Geolocation           │
+                               │ (Google Gemini 3.6 / Claude / GPT-4o / Seer)  │
+                               └──────────────────────┬────────────────────────┘
+                                                      │
+                       ┌──────────────────────────────┴──────────────────────────────┐
+                       ▼                                                             ▼
+          ┌─────────────────────────┐                                   ┌─────────────────────────┐
+          │  5. OSM Reverse Geocode │                                   │ 6. NOAA Solar & Shadows │
+          │(Nominatim & Overpass POI│                                   │(Solar Azimuth, Elevation│
+          │ + Open-Meteo Elevation) │                                   │  & Shadow Vector Angle) │
+          └────────────┬────────────┘                                   └────────────┬────────────┘
+                       │                                                             │
+                       └──────────────────────────────┬──────────────────────────────┘
+                                                      ▼
+                               ┌───────────────────────────────────────────────┐
+                               │ 7. Geospatial OSINT Intelligence Dashboard    │
+                               │  (MapLibre GL, Forensics Loupe, Multi-Coords, │
+                               │   7-Domain Evidence, GeoJSON/KML/PDF Dossier) │
+                               └───────────────────────────────────────────────┘
 ```
 
 ---
@@ -88,19 +99,24 @@ GeoGuard/
 ├── backend/
 │   ├── app/
 │   │   ├── api/
-│   │   │   └── routes.py              # REST & SSE streaming endpoints
+│   │   │   └── routes.py              # REST & SSE streaming, Text-to-Geo, OSM & Solar endpoints
 │   │   ├── config/
 │   │   │   └── settings.py            # Pydantic BaseSettings (.env loader)
 │   │   ├── providers/
 │   │   │   ├── base.py                # Abstract GeolocationProvider interface
-│   │   │   ├── mock_provider.py       # Deterministic multi-region demo engine
+│   │   │   ├── gemini_provider.py     # Native Google Gemini 3.6 Flash / 2.0 Vision Provider
+│   │   │   ├── claude_provider.py     # Native Anthropic Claude 3.5 Sonnet Vision Provider
+│   │   │   ├── openai_provider.py     # OpenAI / OpenRouter Multimodal Vision Provider
 │   │   │   ├── geoseer_provider.py    # Production GeoSeer REST client
+│   │   │   ├── mock_provider.py       # Offline simulated demo engine
 │   │   │   └── factory.py             # Provider resolver factory
 │   │   ├── schemas/
-│   │   │   └── analysis.py            # Pydantic schema models
+│   │   │   └── analysis.py            # Pydantic schema models (Solar, OSM, Coords, Exif)
 │   │   ├── services/
-│   │   │   ├── exif_service.py        # EXIF tags & GPS coordinate extraction
-│   │   │   ├── ocr_service.py         # Optical character recognition & script detection
+│   │   │   ├── osm_service.py         # OpenStreetMap Nominatim reverse geocoding & Overpass API
+│   │   │   ├── solar_service.py       # NOAA solar azimuth, elevation & shadow calculation
+│   │   │   ├── exif_service.py        # Optical EXIF (35mm equiv, f-number, shutter, heading, GPS)
+│   │   │   ├── ocr_service.py         # Multilingual character recognition & script detection
 │   │   │   ├── evidence_service.py    # 7-domain evidence & contradiction synthesizer
 │   │   │   └── pipeline_service.py    # 7-stage orchestrator (sync & SSE streaming)
 │   │   ├── utils/
@@ -113,21 +129,25 @@ GeoGuard/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Header.tsx             # Brand header, status indicator & settings trigger
-│   │   │   ├── UploadArea.tsx         # Drag & drop, preview, canvas demo presets
+│   │   │   ├── Header.tsx             # Brand header, provider status & settings modal trigger
+│   │   │   ├── UploadArea.tsx         # Dual mode: Photo upload + Field Incident Text-to-Geo
 │   │   │   ├── AnalysisScreen.tsx     # Animated radar scanning & stage progress
-│   │   │   ├── PrimaryLocation.tsx    # Estimated location card & confidence meter
-│   │   │   ├── GeoMap.tsx             # MapLibre GL map with radar pin & uncertainty circle
+│   │   │   ├── PrimaryLocation.tsx    # Multi-format coordinates (DD, DMS, MGRS, UTM, Plus Code) & OSINT Pivots
+│   │   │   ├── GeoMap.tsx             # MapLibre GL map with radar pin, solar vectors & OSM POI markers
+│   │   │   ├── SolarIntelligence.tsx  # Astronomical solar azimuth, elevation & shadow dial
+│   │   │   ├── OsmVerificationPanel.tsx# Real OpenStreetMap address hierarchy & nearby infrastructure
+│   │   │   ├── ImageForensicsModal.tsx# Magnifier Loupe & client-side Sobel edge / contrast filters
+│   │   │   ├── ExportDossierModal.tsx # Multi-format export (GeoJSON, KML, CSV, Printable PDF)
 │   │   │   ├── EvidencePanel.tsx      # 7-category visual evidence breakdown
-│   │   │   ├── ContradictionsPanel.tsx# Scientific uncertainty & contradiction panel
-│   │   │   ├── CandidatesList.tsx     # Ranked candidate locations table/cards
-│   │   │   ├── ExifIntelligence.tsx   # Hardware camera & GPS metadata drawer
+│   │   │   ├── ContradictionsPanel.tsx# Scientific uncertainty & contradiction matrix
+│   │   │   ├── CandidatesList.tsx     # Ranked candidate locations cards
+│   │   │   ├── ExifIntelligence.tsx   # Optical camera & hardware GPS metadata drawer
 │   │   │   ├── OcrIntelligence.tsx    # Extracted text, signage & script chips
-│   │   │   ├── SettingsModal.tsx      # Provider & API key configuration modal
+│   │   │   ├── SettingsModal.tsx      # Multi-provider credentials manager
 │   │   │   ├── ErrorBanner.tsx        # Error diagnostics & retry handler
-│   │   │   └── ResultsDashboard.tsx   # Comprehensive geospatial results container
+│   │   │   └── ResultsDashboard.tsx   # Comprehensive geospatial intelligence container
 │   │   ├── services/
-│   │   │   └── api.ts                 # API client with SSE streaming support
+│   │   │   └── api.ts                 # API client with SSE streaming & export generators
 │   │   ├── types/
 │   │   │   └── analysis.ts            # TypeScript interfaces
 │   │   ├── index.css                  # Dark geospatial aesthetic & custom animations
@@ -162,7 +182,7 @@ pip install -r requirements.txt
 python run.py
 ```
 
-*The backend will start at `http://localhost:8000`. Interactive OpenAPI documentation is available at `http://localhost:8000/docs`.*
+*The backend starts at `http://localhost:8000`. Interactive OpenAPI documentation is available at `http://localhost:8000/docs`.*
 
 ---
 
@@ -181,75 +201,10 @@ npm install
 npm run dev
 ```
 
-*Open `http://localhost:5173` in your web browser.*
-
----
-
-## ⚙️ Configuration & Modes
-
-### Mock Mode (Default)
-
-GeoGuard runs in **Mock Mode** by default. In `backend/.env`:
-
-```env
-GEOLOCATION_PROVIDER=mock
-```
-
-- Enables full testing of all features without requiring an external API key.
-- Includes realistic multi-region scenarios (Paris France, Kolhapur/Maharashtra India, Shibuya Tokyo, Grand Canyon USA).
-- Clearly flagged in the UI with **DEMO DATA — NOT REAL GEOLOCATION**.
-
-### Real GeoSeer API Mode
-
-To use the live GeoSeer cloud AI model:
-
-1. Obtain an API key from [geoseeer.com/dashboard](https://geoseeer.com/dashboard).
-2. Configure `backend/.env` or enter your key in the **GeoGuard Settings Modal** in the UI:
-
-```env
-GEOLOCATION_PROVIDER=geoseer
-GEOSEER_API_KEY=your_geoseer_api_key_here
-GEOSEER_API_URL=https://geoseeer.com/api/v1
-```
-
-3. Restart the backend or save settings directly from the frontend UI.
-
----
-
-## 📡 API Reference
-
-### 1. `POST /api/analyze`
-Analyzes an uploaded photograph and returns complete geolocation intelligence.
-
-- **Request**: `multipart/form-data`
-  - `file`: Image file (JPG, PNG, WebP, HEIC, max 10MB)
-  - `analysis_mode`: `fast` or `agent` (optional, default: `fast`)
-  - `user_context`: Optional text hint (e.g. `"European street"`)
-  - `provider_override`: Optional provider override (`"mock"` or `"geoseer"`)
-  - `api_key_override`: Optional API key override
-- **Response**: `GeolocationResult` JSON object.
-
-### 2. `POST /api/analyze/stream`
-Server-Sent Events (SSE) streaming endpoint pushing real-time progress events across all 7 stages.
-
-### 3. `GET /api/config`
-Returns active provider status, mock mode indicator, and allowed file formats.
-
-### 4. `GET /api/health`
-Service health check and version info.
-
----
-
-## 🔒 Security & Privacy
-
-- **Server-Side API Keys**: External API keys are kept on the backend and never exposed in frontend bundles.
-- **Strict File Validation**: Content length, MIME types, and file structure are verified using Pillow before processing.
-- **Safe Temporary Memory**: Uploaded image bytes are processed in-memory and discarded after analysis.
-- **CORS Protection**: Access is restricted to configured frontend origins.
+*Open `http://localhost:5173` in your browser.*
 
 ---
 
 ## 🛡️ License
 
 GeoGuard is distributed under the MIT License.
-

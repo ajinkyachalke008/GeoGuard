@@ -9,14 +9,14 @@ import {
   GeolocationResult,
   PipelineStage,
   AppConfig,
-  AnalysisConfig
+  AnalysisConfig,
 } from './types/analysis';
-import { fetchAppConfig, analyzeImage } from './services/api';
-import { Shield, Sparkles, Compass } from 'lucide-react';
+import { fetchAppConfig, analyzeImage, analyzeEvent } from './services/api';
+import { Shield } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [config, setConfig] = useState<AppConfig | null>(null);
-  const [activeProvider, setActiveProvider] = useState<string>('mock');
+  const [activeProvider, setActiveProvider] = useState<string>('gemini');
   const [apiKey, setApiKey] = useState<string>('');
   
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -37,7 +37,7 @@ export const App: React.FC = () => {
         setActiveProvider(cfg.provider);
       })
       .catch((err) => {
-        console.warn('Could not load initial backend config, defaulting to mock:', err);
+        console.warn('Could not load initial backend config:', err);
       });
   }, []);
 
@@ -61,15 +61,14 @@ export const App: React.FC = () => {
     setLastUploadedFile(file);
     setLastAnalysisConfig(analysisConfig);
 
-    // Initial 7 stages definition
     const initialStages: PipelineStage[] = [
-      { stage_id: 'stage_1', name: 'Preparing image', status: 'processing', message: 'Validating file integrity...' },
-      { stage_id: 'stage_2', name: 'Extracting metadata', status: 'pending', message: '' },
-      { stage_id: 'stage_3', name: 'Analyzing visible text', status: 'pending', message: '' },
-      { stage_id: 'stage_4', name: 'Analyzing geographic clues', status: 'pending', message: '' },
-      { stage_id: 'stage_5', name: 'Generating candidate locations', status: 'pending', message: '' },
-      { stage_id: 'stage_6', name: 'Verifying evidence', status: 'pending', message: '' },
-      { stage_id: 'stage_7', name: 'Preparing geographic result', status: 'pending', message: '' },
+      { stage_id: 'stage_1', name: 'Preparing image & optical validation', status: 'processing', message: 'Validating file integrity...' },
+      { stage_id: 'stage_2', name: 'Extracting EXIF & optical telemetry', status: 'pending', message: '' },
+      { stage_id: 'stage_3', name: 'Analyzing visible text & scripts (OCR)', status: 'pending', message: '' },
+      { stage_id: 'stage_4', name: 'AI Visual Geolocation & spatial deduction', status: 'pending', message: '' },
+      { stage_id: 'stage_5', name: 'OpenStreetMap reverse geocoding & coordinates', status: 'pending', message: '' },
+      { stage_id: 'stage_6', name: 'Ground-truth infrastructure & solar shadow analysis', status: 'pending', message: '' },
+      { stage_id: 'stage_7', name: 'Synthesizing OSINT intelligence report', status: 'pending', message: '' },
     ];
     setStages(initialStages);
 
@@ -92,6 +91,29 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleStartEventAnalysis = async (eventText: string, analysisConfig: AnalysisConfig) => {
+    setError(null);
+    setResult(null);
+    setIsAnalyzing(true);
+    setAnalyzedFileName('Incident Dispatch');
+    setLastUploadedFile(null);
+
+    try {
+      const payloadConfig: AnalysisConfig = {
+        ...analysisConfig,
+        provider_override: activeProvider,
+        api_key_override: apiKey.trim() || undefined,
+      };
+
+      const finalResult = await analyzeEvent(eventText, payloadConfig);
+      setResult(finalResult);
+    } catch (err: any) {
+      setError(err.message || 'Incident analysis encountered an error.');
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   const handleRetry = () => {
     if (lastUploadedFile && lastAnalysisConfig) {
       handleStartAnalysis(lastUploadedFile, lastAnalysisConfig);
@@ -103,6 +125,7 @@ export const App: React.FC = () => {
     setError(null);
     setIsAnalyzing(false);
     setStages([]);
+    setLastUploadedFile(null);
   };
 
   const handleSaveSettings = (newProvider: string, newApiKey: string) => {
@@ -146,12 +169,13 @@ export const App: React.FC = () => {
         {isAnalyzing ? (
           <AnalysisScreen stages={stages} imageFileName={analyzedFileName} />
         ) : result ? (
-          <ResultsDashboard result={result} />
+          <ResultsDashboard result={result} uploadedFile={lastUploadedFile} />
         ) : (
           <UploadArea
             onAnalyze={handleStartAnalysis}
+            onAnalyzeEvent={handleStartEventAnalysis}
             isAnalyzing={isAnalyzing}
-            maxFileSizeMb={config?.max_file_size_mb || 10}
+            maxFileSizeMb={config?.max_file_size_mb || 15}
           />
         )}
 
@@ -162,11 +186,11 @@ export const App: React.FC = () => {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Shield className="w-4 h-4 text-cyan-400" />
-            <span className="text-slate-300 font-semibold">GeoGuard</span>
-            <span>— AI Visual Geolocation &amp; Geographic Intelligence</span>
+            <span className="text-slate-300 font-semibold">GeoGuard v2.0 PRO</span>
+            <span>— AI Visual Geolocation &amp; OpenStreetMap OSINT Engine</span>
           </div>
           <div>
-            <span>Local &amp; Modular Engine • Open-Source Geospatial Security</span>
+            <span>100% Real Multimodal AI • OpenStreetMap Nominatim • Astronomical NOAA Solar Calculations</span>
           </div>
         </div>
       </footer>

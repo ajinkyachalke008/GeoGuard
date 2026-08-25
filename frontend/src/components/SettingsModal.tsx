@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Key, Server, Cpu, Sparkles, ShieldCheck, Eye, EyeOff, Save } from 'lucide-react';
+import { X, Key, Server, Cpu, Sparkles, Eye, EyeOff, Save, Globe } from 'lucide-react';
 import { AppConfig } from '../types/analysis';
 
 interface SettingsModalProps {
@@ -19,7 +19,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   apiKey,
   onSaveSettings,
 }) => {
-  const [provider, setProvider] = useState(activeProvider || config?.provider || 'openrouter');
+  const [provider, setProvider] = useState(activeProvider || config?.provider || 'gemini');
   const [key, setKey] = useState(apiKey);
   const [showKey, setShowKey] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
@@ -38,12 +38,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   const getKeyLabel = () => {
     switch (provider) {
+      case 'gemini':
+        return { label: 'Google Gemini API Key', placeholder: 'AIzaSy... / AQ.Ab8...', envVar: 'GEMINI_API_KEY' };
       case 'openrouter':
-        return { label: 'OpenRouter API Key', placeholder: 'sk-or-v1-xxxxxxxxxxxx', envVar: 'OPENROUTER_API_KEY' };
+        return { label: 'OpenRouter API Key', placeholder: 'sk-or-v1-...', envVar: 'OPENROUTER_API_KEY' };
       case 'openai':
-        return { label: 'OpenAI API Key', placeholder: 'sk-proj-xxxxxxxxxxxx', envVar: 'OPENAI_API_KEY' };
+        return { label: 'OpenAI API Key', placeholder: 'sk-proj-...', envVar: 'OPENAI_API_KEY' };
+      case 'claude':
+        return { label: 'Anthropic Claude API Key', placeholder: 'sk-ant-api03-...', envVar: 'ANTHROPIC_API_KEY' };
       case 'geoseer':
-        return { label: 'GeoSeer API Key', placeholder: 'gs_live_xxxxxxxxxxxx', envVar: 'GEOSEER_API_KEY' };
+        return { label: 'GeoSeer API Key', placeholder: 'gs_live-...', envVar: 'GEOSEER_API_KEY' };
       default:
         return { label: 'API Key (Optional)', placeholder: 'Not required for Mock mode', envVar: 'N/A' };
     }
@@ -52,7 +56,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const keyMeta = getKeyLabel();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
       <div className="w-full max-w-xl glass-panel p-6 relative border-cyan-500/30 shadow-2xl animate-in fade-in zoom-in duration-200">
         
         {/* Modal Header */}
@@ -66,7 +70,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 GeoGuard Engine Settings
               </h3>
               <p className="text-xs text-slate-400">
-                Configure Geolocation Providers &amp; External AI Credentials
+                Select Active Geolocation Provider &amp; AI Vision Credentials
               </p>
             </div>
           </div>
@@ -89,7 +93,31 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               
-              {/* OpenRouter GPT-4o */}
+              {/* Google Gemini */}
+              <button
+                type="button"
+                onClick={() => setProvider('gemini')}
+                className={`p-3.5 rounded-xl text-left border transition-all ${
+                  provider === 'gemini'
+                    ? 'bg-cyan-950/60 border-cyan-400/80 text-white shadow-[0_0_12px_rgba(6,182,212,0.25)] ring-1 ring-cyan-400/40'
+                    : 'bg-cyber-950/50 border-slate-800 text-slate-400 hover:border-slate-700'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-semibold text-xs text-cyan-300 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                    Google Gemini 3.6
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-cyan-900/60 text-cyan-200 border border-cyan-500/40 font-bold">
+                    Active Vision
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-400 leading-tight">
+                  High-precision multimodal spatial deduction, landmark knowledge, and OCR.
+                </p>
+              </button>
+
+              {/* OpenRouter */}
               <button
                 type="button"
                 onClick={() => setProvider('openrouter')}
@@ -101,15 +129,32 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               >
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-semibold text-xs text-cyan-300 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                    <Cpu className="w-3.5 h-3.5 text-cyan-400" />
                     OpenRouter GPT-4o
                   </span>
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-cyan-900/60 text-cyan-200 border border-cyan-500/40">
-                    Live Vision
-                  </span>
+                  <span className="w-2 h-2 rounded-full bg-cyan-400" />
                 </div>
                 <p className="text-[11px] text-slate-400 leading-tight">
-                  State-of-the-art multimodal OSINT geolocation with full visual deduction.
+                  Unified endpoint with access to GPT-4o, Claude 3.5, and Gemini.
+                </p>
+              </button>
+
+              {/* Anthropic Claude */}
+              <button
+                type="button"
+                onClick={() => setProvider('claude')}
+                className={`p-3.5 rounded-xl text-left border transition-all ${
+                  provider === 'claude'
+                    ? 'bg-purple-950/60 border-purple-400/80 text-white shadow-[0_0_12px_rgba(168,85,247,0.25)] ring-1 ring-purple-400/40'
+                    : 'bg-cyber-950/50 border-slate-800 text-slate-400 hover:border-slate-700'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-semibold text-xs text-purple-300">Claude 3.5 Sonnet</span>
+                  <span className="w-2 h-2 rounded-full bg-purple-400" />
+                </div>
+                <p className="text-[11px] text-slate-400 leading-tight">
+                  Anthropic vision model with deep forensic reasoning.
                 </p>
               </button>
 
@@ -124,14 +169,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="font-semibold text-xs text-emerald-300 flex items-center gap-1.5">
-                    <Cpu className="w-3.5 h-3.5 text-emerald-400" />
-                    OpenAI GPT-4o
-                  </span>
+                  <span className="font-semibold text-xs text-emerald-300">OpenAI GPT-4o</span>
                   <span className="w-2 h-2 rounded-full bg-emerald-400" />
                 </div>
                 <p className="text-[11px] text-slate-400 leading-tight">
-                  Direct OpenAI API vision endpoint with custom model parameters.
+                  Direct OpenAI API vision endpoint.
                 </p>
               </button>
 
@@ -169,7 +211,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <span className="w-2 h-2 rounded-full bg-amber-400" />
                 </div>
                 <p className="text-[11px] text-slate-400 leading-tight">
-                  Offline simulated candidate generator.
+                  Offline simulated demo generator.
                 </p>
               </button>
 
